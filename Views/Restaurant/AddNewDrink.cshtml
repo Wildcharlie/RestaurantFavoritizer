@@ -1,0 +1,32 @@
+﻿@model RestaurantFavoritizer.Models.DrinkItem
+
+<div class="menu-item col-md-4">
+    <div class="menu-item-information">
+        <div class="list-group-item" data-toggle="collapse" href="#collapse-drink-@Model.DrinkItemID" aria-expanded="false" aria-controls="collapse-drink-@Model.DrinkItemID">
+            <div class="menu-item-info">
+                <span class="menu-item-price pull-right">$@Model.price</span>
+                <div class="menu-item-title"><h4>@Model.DrinkItemName</h4></div>
+                <div class="menu-item-type">@Model.DrinkItemType</div>
+                @if (@Model.DrinkItemDescription != null)
+                {
+                    <div class="menu-item-description">
+                        <p>
+                            @Model.DrinkItemDescription
+                        </p>
+                    </div>
+                }
+            </div>
+            <div class="menu-item-rating">
+                <span class="menu-item-dislikes pull-right" title="I Dislike This" data-action="/Restaurant/ToggleDrinkLike" data-json="{&quot;DrinkItemID&quot;: @Model.DrinkItemID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Dislike),&quot;RestaurantID&quot;: @Model.RestaurantID}">
+                    <i class="fa fa-thumbs-down"></i><span class="dislikeCount">@Model.DisLikeCount</span>
+                </span>
+                <span class="menu-item-likes pull-right" title="I Like This" data-action="/Restaurant/ToggleDrinkLike" data-json="{&quot;DrinkItemID&quot;: @Model.DrinkItemID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Like),&quot;RestaurantID&quot;: @Model.RestaurantID}">
+                    <i class="fa fa-thumbs-up"></i><span class="likeCount">@Model.LikeCount</span>
+                </span>
+                <span class="menu-item-add pull-right" href="#addToFavorites" title="Favorite" data-type="DrinkItem" data-container="Restaurant-@Model.RestaurantID" data-action="/MyFavorites/AddFavoriteDrink" data-json="{&quot;RestaurantID&quot;: @Model.RestaurantID,&quot;DrinkItemID&quot;: @Model.DrinkItemID,&quot;DrinkItemName&quot;: &quot;@Model.DrinkItemName&quot;,&quot;price&quot;: @Model.price}">
+                    <i class="fa fa-star fa-lg"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

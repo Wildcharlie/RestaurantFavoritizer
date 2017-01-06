@@ -1,0 +1,101 @@
+﻿@model RestaurantFavoritizer.Models.MainViewClass
+
+@{
+    ViewBag.Title = "Favoritizer";
+}
+<script type="text/javascript" src="@Url.Content("/Scripts/Main.js")"></script>
+<div id="userInfo" data-json="{&quot;FavUserID&quot;: @Model.FavUser.FavUserID}" style="display: none"></div>
+
+<div class="row">
+    <div class="col-md-3 user-info">
+        <div class="panel panel-primary">
+            <div class="panel-heading user-info-header">
+                <div class="user-profile-image">
+                    <img class="img-responsive" src="@Model.AvatarURL" />
+                </div>
+            </div>
+            <div class="user-info panel-body">
+                <div class="user-info-name"><a href="/Profile">@Model.FavUser.FirstName @Model.FavUser.LastName</a></div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span>Favorites</span>
+                                <div class="count">
+                                    @Model.FavCount
+                                </div>
+                            </td>
+                            <td>
+                                <span>Perk Points</span>
+                                <div class="count">
+                                    @Model.FavUser.PerkTotal
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5 feed-col">
+        <div class="feed-main">
+            <div class="feed-header">
+                <a class="btn-sm btn-primary pull-right create-restaurant-button" href="#" data-toggle="modal" data-target="#restaurantModal"><i class="fa fa-plus-square fa-lg"></i>&nbsp; Add Restaurant</a>
+                <h4 class="feed-title">Recent Restaurants</h4>
+            </div>
+            <div id="feed" class="feed">
+                @if (Model.Restaurants.Count() > 0)
+                {
+                    foreach (var item in Model.Restaurants)
+                    {
+                        <text>
+                            <div class="feed-post-container">
+                                <div class="feed-post">
+                                    @*<a class="restaurant-favorite-add pull-right" href="#" title="Add To Favorites" data-json="{&quot;RestaurantID&quot;: @item.RestaurantID,&quot;RestaurantName&quot;: &quot;@item.RestaurantName&quot;}">
+                                            <i class="fa fa-star"></i>
+                                        </a>*@
+                                    <span> @Html.ActionLink(item.RestaurantName, "Details", "Restaurant", new { id = item.RestaurantID }, null)</span>
+                                    <span class="feed-type">@item.RestaurantType</span>
+                                    <span class="feed-location">@item.MainLocation.AddressLn1 @item.MainLocation.City, @item.MainLocation.State</span>
+                                    <span class="feed-date text-muted">@item.CreateDate</span>
+                                </div>
+                            </div>
+                        </text>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-4 user-friends">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th colspan="3">Friend Activity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model.FriendResults)
+                {
+                    <text>
+                    <tr onclick="location.href='/Profile/Details/@item.FavUserID'">
+                        <td>
+                            @item.FirstName @item.LastName
+                        </td>
+                        <td>
+                            @EnumNinja.DisplayName(item.PerkType)
+                        </td>
+                        <td>
+                            @item.Value Points
+                        </td>
+                    </tr>
+                </text>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@RenderPage("/Views/Shared/RestaurantModal.cshtml")

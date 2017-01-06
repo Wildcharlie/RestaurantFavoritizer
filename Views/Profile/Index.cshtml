@@ -1,0 +1,123 @@
+﻿@model RestaurantFavoritizer.Models.ProfileViewClass
+
+@{
+    ViewBag.Title = "Profile";
+}
+
+<div class="row">
+    <div class="col-md-12 user-info">
+        <div class="panel panel-primary">
+            <div class="panel-heading user-info-header">
+                <div class="user-profile-image">
+                    <img class="img-responsive" src="@Model.AvatarURL" />
+                </div>
+                <a class="btn-sm btn-default pull-right" href="#" data-toggle="modal" data-target="#editProfileModal"><i class="fa fa-cogs fa-lg"></i>&nbsp;Edit Profile</a>
+            </div>
+            <div class="user-info panel-body">
+                <div class="user-info-name"><a href="/Profile/">@Model.FavUser.FirstName @Model.FavUser.LastName</a></div>
+                <table style="width:auto;">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span>Favorites</span>
+                                <div class="count">
+                                    @Model.FavCount
+                                </div>
+                            </td>
+                            <td style="padding-left:15px;">
+                                <span>Perk Points</span>
+                                <div class="count">
+                                    @Model.FavUser.PerkTotal
+                                </div>
+                            </td>
+                            <td style="padding-left:15px;">
+                                <span>Title</span>
+                                <div class="count">
+                                    @Model.Title
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-4">
+    <table class="table table-striped">
+        <thead class="bg-primary">
+            <tr><th colspan="3">Recent Perk Points</th></tr>
+        </thead>
+        @foreach (var p in Model.RecentPerks)
+            {
+            <text>
+                <tr>
+                    <td>
+                        @EnumNinja.DisplayName(p.PerkType)
+                    </td>
+                    <td>
+                        @p.Value Points
+                    </td>
+                    <td>
+                        @p.CreateDate.ToShortDateString()
+                    </td>
+                </tr>
+            </text>
+        }
+    </table>
+</div>
+
+<div class="col-sm-4">
+    <table style="margin-bottom:0px;" class="table table-striped">
+        <thead class="bg-primary">
+            <tr><th colspan="3">Recent Favorites</th></tr>
+        </thead>
+    </table>
+    <table class="table table-hover table-striped">
+        @foreach (var f in Model.RecentFavorites)
+            {
+            <text>
+                <tr onclick="location.href='/Restaurant/Details/@f.FavoriteID'">
+                    <td>
+                        @f.Restaurant.RestaurantName
+                    </td>
+                    <td>
+                        @EnumNinja.DisplayName(f.Restaurant.RestaurantType)
+                    </td>
+                    <td>
+                        @f.CreateDate.ToShortDateString()
+                    </td>
+                </tr>
+            </text>
+        }
+    </table>
+</div>
+
+<div class="col-sm-4">
+    <table style="margin-bottom:0px;" class="table table-striped">
+        <thead class="bg-primary">
+            <tr><th colspan="2">Friends</th><th><a style="margin-top:0px; font-weight: normal;" class="btn-xs btn-default pull-right create-restaurant-button" href="#" data-toggle="modal" data-target="#addUserModal"><i class="fa fa-user-plus fa-lg"></i>&nbsp;Add/Invite</a></th></tr>
+        </thead>
+    </table>
+    <table class="table table-hover table-striped">
+        @foreach (var f in Model.Friends)
+            {
+            <text>
+                <tr onclick="location.href='/Profile/Details/@f.FavUserID'">
+                    <td>
+                        <a href="/Profile/Details/@f.FavUserID"> @f.FirstName  @f.LastName </a>
+                    </td>
+                    <td>
+                        @f.PerkTotal Points
+                    </td>
+                    <td>
+                        @f.CreateDate.ToShortDateString()
+                    </td>
+                </tr>
+            </text>
+        }
+    </table>
+</div>
+
+@RenderPage("/Views/Profile/EditProfileModal.cshtml")
+@RenderPage("/Views/Profile/AddUserModal.cshtml")

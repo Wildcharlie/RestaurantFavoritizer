@@ -1,0 +1,16 @@
+﻿@model RestaurantFavoritizer.Models.DrinkItem
+
+<div class="list-group-item DrinkItem">
+    <span class="pull-right price">$@Model.price</span>
+    <span class="h4">
+        @Model.DrinkItemName
+    </span>
+    <span class="list-group-icons add-cursor-span">
+        <span class="favorite-item-edit" title="Change Favorite" data-json="{&quot;RestaurantID&quot;: @Model.RestaurantID}" data-toggle="modal" data-target="#addMenuItemModal">
+            <i class="fa fa-pencil fa-lg"></i>
+        </span>
+        <span class="favorite-drink-delete" title="Remove from Favorites" data-json="{&quot;RestaurantID&quot;: @Model.RestaurantID}">
+            <i class="fa fa-trash fa-lg"></i>
+        </span>
+    </span>
+</div>

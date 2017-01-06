@@ -1,0 +1,51 @@
+﻿@model RestaurantFavoritizer.Models.MainViewClass
+
+@{ 
+    bool newPage = true;
+    int pageCount = 0;
+    int count = 0;
+}
+
+@foreach (var item in Model.Restaurants)
+{
+    if (newPage == true)
+    {
+        newPage = false;
+        count = 0;
+        pageCount++;
+        @:<div id="page-@pageCount" class="page-container @(pageCount == 1 ? "active" : "")">
+    }
+    <text>
+        <div class="list-group-item favorite-restaurant">
+            <a class="restaurant-add pull-right" href="#" title="Add To Favorites" data-json="{&quot;RestaurantID&quot;: @item.RestaurantID,&quot;RestaurantName&quot;: &quot;@item.RestaurantName&quot;}"><i class="fa fa-plus-square fa-lg"></i></a>
+            <h4 class="list-group-item-heading">@item.RestaurantName</h4>
+        </div>
+    </text>
+
+    count++;
+
+    if (count == 8 || Model.Restaurants.Last() == item)
+    {
+        @:</div>
+        newPage = true;
+    }
+
+}
+
+<ul id="searchPagination" class="pagination">
+
+    @for (int i = 1; i <= pageCount; i++)
+    {
+        <li class="page-list @(i == 1 ? "active" : "")"><a href="#page-@i" class="page-link">@i</a></li>
+    }
+</ul>
+
+<script>
+    $("#searchPagination").on('click', '.page-link', function () {
+        var page = $(this).attr('href');
+        $('.page-list').removeClass('active');
+        $('.page-container').removeClass('active')
+        $(page).addClass('active');
+        $(this).parent().addClass('active');
+    });
+</script>

@@ -1,0 +1,116 @@
+﻿@model RestaurantFavoritizer.Models.MainMapViewClass
+@{
+    ViewBag.Title = "Map";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="@Url.Content("/Scripts/MapMain.js")"></script>
+
+<h2>Map</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="radio-inline">
+            @Html.RadioButton("ResultType", "Google Places", true, new { id = "gplace", onclick = "javascript:ToggleInfoRow('gplace');" })
+            @Html.Label("gplace", "Google Places")
+        </div>
+        <div class="radio-inline">
+            @Html.RadioButton("ResultType", "Favoritizers", new { id = "fav", onclick = "javascript:ToggleInfoRow('fav');" })
+            @Html.Label("fav", "Favoritizers")
+        </div>
+    </div>
+</div>
+
+<div class="row padded">
+    <div class="col-md-12 form-inline">
+
+        <div id="favdiv" style="display: none;">
+            <label for="RestaurantType" id="typeLabel">Show Me: </label>
+            @Html.EnumDropDownListFor(model => model.RestaurantType, "All", new { @class = "form-control", onchange="javascript:search();" })
+            <div class="form-group">
+                <div class="input-group">
+                    <input id="favKeyword" class="form-control search-box" type="text" width="100" placeholder="Search.." onkeypress="handleSearch(event)" />
+                    <span style="cursor:pointer;" class="input-group-addon"><i class="fa fa-search"  onclick="javascript:search();"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="placediv">
+            <div class="form-group">
+                <label for="type" id="typeLabel">Show Me: </label>
+                <select id="type" class="form-control">
+                    <option value="restaurant" selected="selected">Restaurants</option>
+                    <option value="bar">Bars</option>
+                    <option value="cafe">Cafes</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="rankBy" id="rankByLabel">
+                    Rank By:
+                </label>
+                <select id="rankBy" class="form-control">
+                    <option value="prominence">Prominence</option>
+                    <option value="distance">Distance</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <input id="keyword" class="form-control search-box" type="text" width="100" placeholder="Search.." onkeypress="handleSearch(event)" />
+                    <span style="cursor:pointer;" class="input-group-addon"><i class="fa fa-search" onclick="javascript:search();" ></i></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row padded">
+    <div class="col-md-9">
+        <div id="map_canvas" class="map-canvas"></div>
+    </div>
+    <div class="col-md-3">
+        <div id="listing" class="listing">
+            <table id="resultsTable" class="table table-striped">
+                <tbody id="results"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div id="favListing" class="listing">
+            <table id="favTable" class="table table-striped">
+                <tbody id="favResults"></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="iconCredit">Numbered icons courtesy of <a href="http://mapicons.nicolasmollet.com">Maps Icons Collection</a></div>
+</div>
+
+<script type="text/javascript">
+
+    function GetActionURL() {
+        var actionUrl = '@Url.Action("LocalFavorites", "Map")';
+        return actionUrl;
+    }
+
+    function ToggleInfoRow(name) {
+        if (name == 'gplace') {
+            document.getElementById('placediv').style.display = 'block';
+            document.getElementById('favdiv').style.display = 'none';
+            search();
+        }
+        else {
+            document.getElementById('placediv').style.display = 'none';
+            document.getElementById('favdiv').style.display = 'block';
+            search();
+        }
+    }
+
+    function handleSearch(e) {
+        if (e.keyCode === 13) {
+            search();
+        }
+
+        return false;
+    }
+
+</script>

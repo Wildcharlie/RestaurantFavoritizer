@@ -1,0 +1,149 @@
+﻿@model RestaurantFavoritizer.Models.RestaurantViewClass
+
+@{
+    ViewBag.Title = "Restaurant Details";
+}
+
+<script type="text/javascript" src="@Url.Content("/Scripts/Restaurant.js")"></script>
+
+@{ 
+    bool isFavorited = false;
+    foreach(var item in Model.FavUser.Favorites)
+    {
+        if (item.RestaurantID == Model.Restaurant.RestaurantID)
+        {
+            isFavorited = true;
+        }
+    }
+}
+
+<div id="userInfo" data-json="{&quot;FavUserID&quot;: @Model.UserID}" style="display: none"></div>
+<div class="row restaurant-header">
+    <div class="col-lg-12">
+        <div class="jumbotron">
+            <h1><a href="@Model.Restaurant.WebSiteURL">@Model.Restaurant.RestaurantName</a></h1>
+            <p>Type: @Model.RestType</p>
+                <a id="UnfavoriteButton" class="restaurant-remove btn btn-success favorite-button @(isFavorited ? "active" : "")" href="#" title="Remove To Favorites" data-json="{&quot;RestaurantID&quot;: @Model.Restaurant.RestaurantID,&quot;RestaurantName&quot;: &quot;@Model.Restaurant.RestaurantName&quot;}">
+                    <span class="restaurant-favorited">Favorited</span>
+                    <span class="restaurant-unfavorite">Unfavorite</span>
+                </a>
+                <a id="FavoriteButton" class="restaurant-add btn btn-primary favorite-button @(!isFavorited ? "active" : "")" href="#" title="Add To Favorites" data-json="{&quot;RestaurantID&quot;: @Model.Restaurant.RestaurantID,&quot;RestaurantName&quot;: &quot;@Model.Restaurant.RestaurantName&quot;}"><i class="fa fa-star"></i>
+                    &nbsp; Favorite
+                </a>
+        </div>
+    </div>
+    <div class="col-md-3 restaurant-location">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Location
+                <a id="RestaurantEdit" href="#" class="restaurant-edit pull-right" title="Edit Restaurant" data-toggle="modal" data-target="#EditRestaurantModal">
+                    <i class="fa fa-pencil fa-lg"></i>
+                </a>
+            </div>
+            <div class="panel-body">
+                <div class="map-box">
+                    <div id="map" class="small-map"></div>
+                </div>
+                <div class="restaurant-location-info">
+                    <div>
+                        <i class="fa fa-map-marker fa-lg icon"></i>
+                        <a href="@Model.GooglePlaceURL">
+                            @if (!String.IsNullOrEmpty(Model.Address))
+                            {
+                                @Model.Address
+                            } else
+                            {
+                                <text>-</text>
+                            }
+                        </a>
+                    </div>
+                    <div>
+                        <i class="fa fa-phone fa-lg icon"></i>
+                        <a href="tel:@Model.PlainPhoneNo">
+                            @if (!String.IsNullOrEmpty(Model.FormattedPhoneNo))
+                            {
+                                @Model.FormattedPhoneNo
+                            }
+                            else
+                            {
+                                <text>-</text>
+}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2>Menu</h2>
+
+@RenderPage("ShowMenu.cshtml")
+
+@RenderPage("EditRestaurantModal.cshtml")
+
+<script type="text/javascript">
+
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+        });
+        var geocoder = new google.maps.Geocoder;
+        var infowindow = new google.maps.InfoWindow;
+        geocodePlaceId(geocoder, map, infowindow);
+    }
+
+    function geocodePlaceId(geocoder, map, infowindow) {
+
+        var placeId = '@Model.Restaurant.MainLocation.GooglePlaceID';
+
+        if (placeId) {
+
+            geocoder.geocode({ 'placeId': placeId }, function (results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+                        map.setZoom(16);
+                        map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location
+                        });
+                        infowindow.setContent(results[0].formatted_address);
+                        infowindow.open(map, marker);
+
+                    } else {
+                        //window.alert('No results found');
+                    }
+                } else {
+                    //window.alert('Geocoder failed due to: ' + status);
+                }
+                map.panBy(0, -45);
+            });
+
+        }
+        else {
+            var icon = '/Content/Images/icons/restaurant/@Model.Restaurant.IconName' + '.png';
+            var myLatlng = new google.maps.LatLng(@Model.Restaurant.MainLocation.Latitude, @Model.Restaurant.MainLocation.Longitude);
+            map.setZoom(16);
+            map.setCenter(myLatlng);
+
+            var marker = new google.maps.Marker({
+                map: map,
+                icon: icon,
+                position: myLatlng
+            });
+
+            var addy = '@Model.Restaurant.MainLocation.AddressLn1';
+
+            if (addy != ''){
+                infowindow.setContent(addy);
+            }
+            else{
+                infowindow.setContent('@Model.Restaurant.RestaurantName');
+            }
+            infowindow.open(map, marker);
+
+            map.panBy(0, -45);
+        }
+    }
+
+</script>

@@ -1,0 +1,57 @@
+﻿@model RestaurantFavoritizer.Models.RestaurantViewClass
+
+<script type="text/javascript" src="@Url.Content("/Scripts/mapModal.js")"></script>
+
+<div id="EditRestaurantModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Restaurant</h4>
+            </div>
+            <div class="modal-body">
+                <form id="restaurantEventForm" action="/Restaurant/EditRestaurant" method="post">
+                    <input id="RestaurantID" value="@Model.Restaurant.RestaurantID" name="RestaurantID" style="display: none;"></input>
+                    <input id="LocationID" value="@Model.Restaurant.MainLocation.LocationID" name="LocationID" style="display: none;" />
+                    <div class="form-group">
+                        <label for="RestaurantName">Restaurant Name</label>
+                        <input class="form-control" id="RestaurantName" maxlength="100" name="RestaurantName" type="text" value="@Model.Restaurant.RestaurantName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="AddressLn1">Address</label>
+                        <input class="form-control" id="AddressLn1" maxlength="100" name="AddressLn1" type="text" value="@Model.Restaurant.MainLocation.AddressLn1" />
+                    </div>
+                    <div class="form-group">
+                        <label for="City">City</label>
+                        <input class="form-control" id="City" maxlength="100" name="City" type="text" value="@Model.Restaurant.MainLocation.City" />
+                    </div>
+                    <div class="form-group">
+                        <label for="State">State</label>
+                        <input class="form-control" id="State" maxlength="100" name="State" type="text" value="@Model.Restaurant.MainLocation.State" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ZipCode">Zip</label>
+                        <input class="form-control" id="ZipCode" maxlength="5" name="ZipCode" type="text" value="@Model.Restaurant.MainLocation.ZipCode" />
+                    </div>
+                    <div class="form-group">
+                        <label for="WebSiteUrl">Website</label>
+                        @Html.TextBox("WebSiteUrl", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label for="PhoneNo">Phone Number</label>
+                        @Html.TextBox("PhoneNo", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label>Restaurant Type</label>
+                        @Html.EnumDropDownListFor(model => model.RestaurantType, null, new { @class = "form-control" })
+                    </div>
+                    <input class="btn btn-default" type="button" value="Save" id="Save" />
+                    <div id="msg" class="msg"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+﻿@model RestaurantFavoritizer.Models.FoodItem
+
+<div class="menu-item col-md-4">
+    <div class="menu-item-information">
+        <div class="list-group-item" data-toggle="collapse" href="#collapse-food-@Model.FoodItemID" aria-expanded="false" aria-controls="collapse-food-@Model.FoodItemID">
+            <div class="menu-item-info">
+                <span class="menu-item-price pull-right">$@Model.price</span>
+                <div class="menu-item-title"><h4>@Model.FoodItemName</h4></div>
+                <div class="menu-item-type">@Model.FoodItemType</div>
+                @if (@Model.FoodItemDescription != null)
+                {
+                    <div class="menu-item-description">
+                        <p>
+                            @Model.FoodItemDescription
+                        </p>
+                    </div>
+                }
+            </div>
+            <div class="menu-item-rating">
+                <span class="menu-item-dislikes pull-right" title="I Dislike This" data-action="/Restaurant/ToggleFoodLike" data-json="{&quot;FoodItemID&quot;: @Model.FoodItemID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Dislike),&quot;RestaurantID&quot;: @Model.RestaurantID}">
+                    <i class="fa fa-thumbs-down"></i><span class="dislikeCount">@Model.DisLikeCount</span>
+                </span>
+                <span class="menu-item-likes pull-right" title="I Like This" data-action="/Restaurant/ToggleFoodLike" data-json="{&quot;FoodItemID&quot;: @Model.FoodItemID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Like),&quot;RestaurantID&quot;: @Model.RestaurantID}">
+                    <i class="fa fa-thumbs-up"></i><span class="likeCount">@Model.LikeCount</span>
+                </span>
+                <span class="menu-item-add pull-right" href="#" title="Favorite" data-type="FoodItem" data-container="Restaurant-@Model.RestaurantID" data-action="/MyFavorites/AddFavoriteFood" data-json="{&quot;RestaurantID&quot;: @Model.RestaurantID,&quot;FoodItemID&quot;: @Model.FoodItemID,&quot;FoodItemName&quot;: &quot;@Model.FoodItemName&quot;,&quot;price&quot;: @Model.price}">
+                    <i class="fa fa-star fa-lg"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+﻿@model RestaurantFavoritizer.Models.Restaurant
+
+<div class="feed-post-container">
+    <div class="feed-post">
+        @*<a class="restaurant-favorite-add pull-right" href="#" title="Add To Favorites" data-json="{&quot;RestaurantID&quot;: @Model.RestaurantID,&quot;RestaurantName&quot;: &quot;@Model.RestaurantName&quot;}">
+            <i class="fa fa-star"></i>
+        </a>*@
+        <span>@Html.ActionLink(Model.RestaurantName, "Details", "Restaurant", new { id = Model.RestaurantID }, null)</span>
+        <span class="feed-type">@Model.RestaurantType</span>
+        <span class="feed-location">@Model.MainLocation.AddressLn1 @Model.MainLocation.City, @Model.MainLocation.State</span>
+        <span class="feed-date text-muted">@Model.CreateDate</span>
+    </div>
+</div>

@@ -1,0 +1,177 @@
+﻿@model RestaurantFavoritizer.Models.MainViewClass
+@{
+    ViewBag.Title = "Favorites";
+}
+
+<script type="text/javascript" src="@Url.Content("/Scripts/MyFavorites.js")"></script>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="page-header">
+            <h1>My Favorites</h1>
+        </div>
+    </div>
+</div>
+
+<div id="userInfo" data-json="{&quot;FavUserID&quot;: @Model.FavUser.FavUserID}" style="display: none"></div>
+
+<form id="PrivacyForm" action="/MyFavorites/TogglePrivacy" method="post" role="form">
+    <div class="form-group row public-checkbox-container">
+        <label class="col-sm-2">Favorites Privacy</label>
+        <div class="col-sm-10">
+            <div class="checkbox public-checkbox">
+                <label>
+                    <input id="isPublic" name="isPublic" type="checkbox" @if (!Model.FavUser.isPublic) { <text>checked</text> }> Protect my Favorites
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-offset-2 col-sm-4">
+            <p class="text-muted">If selected, only you will be able to view your favorites. All favorites will be hidden from the public.</p>
+            <button id="PrivacyFormSubmit" type="submit" class="btn btn-default">Submit</button>
+            <div id="PrivacyMsg" class="msg"></div>
+        </div>
+    </div>
+</form>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-3 restaurant-add-button">
+        <a href="#" role="button" class="btn btn-default" data-toggle="modal" data-target="#searchModal"><i class="fa fa-plus-square fa-lg"></i>&nbsp; Add</a>
+    </div>
+</div>
+
+<div id="FavoriteList" class="row favorite-container">
+    @if (Model.FavUser.Favorites != null)
+    {
+        foreach (var rest in Model.FavUser.Favorites)
+        {
+        <text>
+
+        <div class="col-md-6 favorite-item">
+            <div id="Restaurant-@rest.RestaurantID" class="list-group">
+                <div class="list-group-item bg-primary restaurant-name">
+                    <span class="list-group-icons pull-right add-cursor-span">
+                        <span class="restaurant-item-add" title="Add Item To Favorites" data-json="{&quot;RestaurantID&quot;: @rest.RestaurantID}" data-toggle="modal" data-target="#addMenuItemModal">
+                            <i class="fa fa-plus-square fa-lg"></i>
+                        </span>
+                        <span class="restaurant-delete" title="Remove from Favorites" data-json="{&quot;RestaurantID&quot;: @rest.RestaurantID}">
+                            <i class="fa fa-trash fa-lg"></i>
+                        </span>
+                    </span>
+                    <h3><a href="/Restaurant/Details/@rest.RestaurantID">@rest.Restaurant.RestaurantName</a></h3>
+                </div>
+                @if (rest.FoodItem != null)
+                {
+                    <div class="list-group-item FoodItem">
+                        <span class="pull-right price">$@rest.FoodItem.price</span>
+                        <span class="h4">
+                            @rest.FoodItem.FoodItemName
+                        </span>
+                        <span class="list-group-icons add-cursor-span">
+                            <span class="favorite-item-edit" title="Change Favorite" data-json="{&quot;RestaurantID&quot;: @rest.RestaurantID}" data-toggle="modal" data-target="#addMenuItemModal">
+                                <i class="fa fa-pencil fa-lg"></i>
+                            </span>
+                            <span class="favorite-food-delete" title="Remove from Favorites" data-json="{&quot;RestaurantID&quot;: @rest.RestaurantID}">
+                                <i class="fa fa-trash fa-lg"></i>
+                            </span>
+                        </span>
+                    </div>
+                }
+                @if (rest.DrinkItem != null)
+                {
+                    <div class="list-group-item DrinkItem">
+                        <span class="pull-right price">$@rest.DrinkItem.price</span>
+                        <span class="h4">
+                            @rest.DrinkItem.DrinkItemName
+                        </span>
+                        <span class="list-group-icons add-cursor-span">
+                            <span class="favorite-item-edit" title="Change Favorite" data-json="{&quot;RestaurantID&quot;: @rest.RestaurantID}" data-toggle="modal" data-target="#addMenuItemModal">
+                                <i class="fa fa-pencil fa-lg"></i>
+                            </span>
+                            <span class="favorite-drink-delete" title="Remove from Favorites" data-json="{&quot;RestaurantID&quot;: @rest.RestaurantID}">
+                                <i class="fa fa-trash fa-lg"></i>
+                            </span>
+                        </span>
+                    </div>
+                }
+                @if (rest.Employee != null)
+                {
+                    <div class="list-group-item EmployeeItem">
+                        <span class="h4">
+                            @rest.Employee.EmployeeName
+                        </span>
+                        <span class="list-group-icons add-cursor-span">
+                            <span class="favorite-item-edit" title="Change Favorite" data-json="{&quot;RestaurantID&quot;: @rest.RestaurantID}" data-toggle="modal" data-target="#addMenuItemModal">
+                                <i class="fa fa-pencil fa-lg"></i>
+                            </span>
+                            <span class="favorite-employee-delete" title="Remove from Favorites" data-json="{&quot;RestaurantID&quot;: @rest.RestaurantID}">
+                                <i class="fa fa-trash fa-lg"></i>
+                            </span>
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>   
+        </text>
+        }
+    }
+</div>    
+
+
+<div id="searchModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Search Restaurants</h4>
+            </div>
+            <div class="modal-body">
+                <div class="restaurant-add-button">
+                    <a id="addRestaurant" class="btn btn-default" href="#" data-toggle="modal" data-target="#restaurantModal"><i class="fa fa-plus-square fa-lg"></i>&nbsp; Add Restaurant</a>
+                </div>
+                <form id="searchEventForm" class="form-inline" action="/MyFavorites/SearchRestaurant" method="post" role="form">
+                    <div class="form-group">
+                        <div class="input-group">
+                            @Html.TextBox("SearchString", null, new { @class = "form-control", @placeholder = "Search" })
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit" id="Search"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+                    <div id="searchTarget" class="col-md-12 search-target">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="closeButton" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="addMenuItemModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Menu Items</h4>
+            </div>
+            <div class="modal-body add-menu-item-modal">
+                <div class="row">
+                    <div id="addMenuItemTarget" class="col-md-12">
+                        <div class="loading text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="addMenuItemCloseButton" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@RenderPage("/Views/Shared/RestaurantModal.cshtml")

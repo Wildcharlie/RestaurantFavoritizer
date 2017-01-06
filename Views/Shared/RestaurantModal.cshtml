@@ -1,0 +1,88 @@
+﻿@model RestaurantFavoritizer.Models.MainViewClass
+<script type="text/javascript" src="@Url.Content("/Scripts/mapModal.js")"></script>
+<script type="text/javascript" src="@Url.Content("/Scripts/jquery.validate.min.js")"></script>
+
+<div id="restaurantModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Restaurant (Click on the map to add the location)</h4>
+            </div>
+            <div class="modal-body">
+                <div id="map" class="modal-map"></div>
+                <input id="pac-input" class="map-search" type="text" placeholder="Search Box">
+                <div class="required-text"><span class="text-danger">*</span> Indicates required field</div>
+                <form id="restaurantEventForm" action="/Home/AddNewRestaurant" method="post">
+                    <div class="form-group form-inline">
+                        <label for="RestaurantName">Restaurant Name <span class="text-danger">*</span></label>
+                        <div class="form-inline">
+                            @Html.TextBox("RestaurantName", null, new { @class = "form-control", @maxlength = "100", @required = "" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="WebSiteUrl">Website</label>
+                        @Html.TextBox("WebSiteUrl", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label for="PhoneNo">Phone Number</label>
+                        @Html.TextBox("PhoneNo", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label>Food Type</label>
+                        @Html.EnumDropDownListFor(model => model.RestaurantType, null, new { @class = "form-control" })
+                    </div>
+                    @Html.Hidden("Latitude")
+                    @Html.Hidden("Longitude")
+                    <input class="btn btn-default submit" type="submit" value="Save New Restaurant" id="Save" />
+                    <div id="msg" class="msg"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onmouseup="ClearValues();" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/jscript">
+    $('#restaurantEventForm').submit(function (e) {
+        e.preventDefault();
+    }).validate({
+            rules: {
+                RestaurantName: "required",
+                RestaurantType: "required"
+            },
+            messages: {
+                RestaurantName: "Please enter a restaurant name"
+            },
+            submitHandler: function (form) {
+                var url = $(form).attr("action");
+                var formData = $(form).serialize();
+                $.ajax({
+                    url: url,
+                    data: formData,
+                    success: function (data) {
+                        if (data) {
+                            $('#feed').prepend(data);
+                            $('#msg').html('<div class="alert alert-dismissible alert-success"><button type="button" class="close" data-dismiss="alert">×</button>\
+                        <span>New Restaurant Added. Thank you for helping to improve Favoritizer.</span></div>');
+                        } else {
+                            $('#msg').html('<div class="alert alert-dismissible alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>\
+                                <span>Failed to add restaurant! Make sure all forms are filled out and you selected a location on the map.</span></div>');
+                        }
+                    },
+                    type: 'POST'
+                });
+            }
+        });
+
+    function ClearValues() {
+        $("#RestaurantName").val("");
+        //$("#Latitude").val("");
+        //$("#Longitude").val("");
+        $("#WebSiteUrl").val("");
+        $("#PhoneNo").val("");
+        $('#msg').html('');
+    }
+</script>

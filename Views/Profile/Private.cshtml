@@ -1,0 +1,41 @@
+﻿@model RestaurantFavoritizer.Models.ProfileViewClass
+
+<div class="row">
+    <div class="col-md-12 user-info">
+        <div class="panel panel-primary">
+            <div class="panel-heading user-info-header">
+                <div class="user-profile-image">
+                    <img class="img-responsive" src="@Model.AvatarURL" />
+                </div>
+            </div>
+            <div class="user-info panel-body">
+                <div class="user-info-name" style="margin-left:10%"><a href="/Profile/">@Model.FavUser.FirstName @Model.FavUser.LastName</a></div>
+                <table style="width:auto;">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span>Favorites</span>
+                                <div class="count">
+                                    @Model.FavCount
+                                </div>
+                            </td>
+                            <td style="padding-left:15px;">
+                                <span>Perk Points</span>
+                                <div class="count">
+                                    @Model.FavUser.PerkTotal
+                                </div>
+                            </td>
+                            <td style="padding-left:15px;">
+                                <span>Title</span>
+                                <div class="count">
+                                    @Model.Title
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<h2>User's Profile is Private</h2>

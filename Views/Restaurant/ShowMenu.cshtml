@@ -1,0 +1,180 @@
+﻿@model RestaurantFavoritizer.Models.RestaurantViewClass
+<script type="text/javascript" src="@Url.Content("/Scripts/ShowMenu.js")"></script>
+
+@{
+    var favoriteItems = Model.FavUser.Favorites.FirstOrDefault(a => a.RestaurantID == Model.Restaurant.RestaurantID);
+    bool isFavorited = (favoriteItems != null) ? true : false;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#food" aria-controls="food" role="tab" data-toggle="tab">Food</a></li>
+            <li role="presentation"><a href="#drink" aria-controls="drink" role="tab" data-toggle="tab">Drinks</a></li>
+            <li role="presentation"><a href="#employee" aria-controls="employee" role="tab" data-toggle="tab">Employees</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div id="MenuContainer" class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="food">
+                <div class="row">
+                    <div class="menu-header col-md-4">
+                        <a href="#" role="button" data-toggle="modal" data-target="#foodModal" class="btn btn-default"><i class="fa fa-plus-square fa-lg"></i>&nbsp; Add Food Item</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="FoodContainer" class="list-group menu-container">
+                        @foreach (var item in Model.Restaurant.FoodItems)
+                        {
+                            var contribution = Model.FavUser.FoodContributions.FirstOrDefault(a => a.FoodItemID == item.FoodItemID);
+                            RestaurantFavoritizer.Models.LikeStatus like = RestaurantFavoritizer.Models.LikeStatus.None;
+                            if (contribution != null) { like = contribution.LikeStatus; }
+
+                            <text>
+                                <div class="menu-item col-md-4">
+                                    <div class="menu-item-information">
+                                        <div class="list-group-item" data-toggle="collapse" href="#collapse-food-@item.FoodItemID" aria-expanded="false" aria-controls="collapse-food-@item.FoodItemID">
+                                            <div class="menu-item-info">
+                                                <span class="menu-item-price pull-right">$@item.price</span>
+                                                <div class="menu-item-title"><h4>@item.FoodItemName</h4></div>
+                                                <div class="menu-item-type">@item.FoodItemType</div>
+
+                                                @if (@item.FoodItemDescription != null)
+                                                {
+                                                    <div class="menu-item-description">
+                                                        <p>
+                                                            @item.FoodItemDescription
+                                                        </p>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="menu-item-rating">
+                                                <span class="pull-right menu-item-dislikes @(like == RestaurantFavoritizer.Models.LikeStatus.Dislike ? "disliked" : "")" title="I Dislike This" data-action="/Restaurant/ToggleFoodLike" data-json="{&quot;FoodItemID&quot;: @item.FoodItemID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Dislike),&quot;RestaurantID&quot;: @item.RestaurantID}">
+                                                    <i class="fa fa-thumbs-down"></i><span class="dislikeCount">@item.DisLikeCount</span>
+                                                </span>
+                                                <span class="pull-right menu-item-likes @(like == RestaurantFavoritizer.Models.LikeStatus.Like ? "liked" : "")" title="I Like This" data-action="/Restaurant/ToggleFoodLike" data-json="{&quot;FoodItemID&quot;: @item.FoodItemID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Like),&quot;RestaurantID&quot;: @item.RestaurantID}">
+                                                    <i class="fa fa-thumbs-up"></i><span class="likeCount">@item.LikeCount</span>
+                                                </span>
+                                                <span class="pull-right menu-item-add @{if (isFavorited && favoriteItems.FoodItemID == item.FoodItemID) { <text>favorited</text> } } " href="#" title="Favorite" data-type="FoodItem" data-container="Restaurant-@Model.Restaurant.RestaurantID" data-action="/MyFavorites/AddFavoriteFood" data-json="{&quot;RestaurantID&quot;: @Model.Restaurant.RestaurantID,&quot;FoodItemID&quot;: @item.FoodItemID,&quot;FoodItemName&quot;: &quot;@item.FoodItemName&quot;,&quot;price&quot;: @item.price}">
+                                                    <i class="fa fa-star fa-lg"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </text>
+                        }                                
+                    </div>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="drink">
+                <div class="row">
+                    <div class="menu-header col-md-4">
+                        <a href="#" role="button" data-toggle="modal" data-target="#drinkModal" class="btn btn-default"><i class="fa fa-plus-square fa-lg"></i>&nbsp; Add Drink Item</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="DrinkContainer" class="list-group menu-container">
+
+                        @foreach (var item in Model.Restaurant.DrinkItems)
+                        {
+                            var contribution = Model.FavUser.DrinkContributions.FirstOrDefault(a => a.DrinkItemID == item.DrinkItemID);
+                            RestaurantFavoritizer.Models.LikeStatus like = RestaurantFavoritizer.Models.LikeStatus.None;
+                            if (contribution != null) { like = contribution.LikeStatus; }
+                            <text>
+                                <div class="menu-item col-md-4">
+                                    <div class="menu-item-information">
+                                        <div class="list-group-item" data-toggle="collapse" href="#collapse-drink-@item.DrinkItemID" aria-expanded="false" aria-controls="collapse-drink-@item.DrinkItemID">
+                                            <div class="menu-item-info">
+                                                <span class="menu-item-price pull-right">$@item.price</span>
+                                                <div class="menu-item-title"><h4>@item.DrinkItemName</h4></div>
+                                                <div class="menu-item-type">@item.DrinkItemType</div>
+                                                @if (@item.DrinkItemDescription != null)
+                                                {
+                                                    <div class="menu-item-description">
+                                                        <p>
+                                                            @item.DrinkItemDescription
+                                                        </p>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="menu-item-rating">
+                                                <span class="menu-item-dislikes pull-right @(like == RestaurantFavoritizer.Models.LikeStatus.Dislike ? "disliked" : "")" title="I Dislike This" data-action="/Restaurant/ToggleDrinkLike" data-json="{&quot;DrinkItemID&quot;: @item.DrinkItemID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Dislike),&quot;RestaurantID&quot;: @item.RestaurantID}">
+                                                    <i class="fa fa-thumbs-down"></i><span class="dislikeCount">@item.DisLikeCount</span>
+                                                </span>
+                                                <span class="menu-item-likes pull-right @(like == RestaurantFavoritizer.Models.LikeStatus.Like ? "liked" : "")" title="I Like This" data-action="/Restaurant/ToggleDrinkLike" data-json="{&quot;DrinkItemID&quot;: @item.DrinkItemID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Like),&quot;RestaurantID&quot;: @item.RestaurantID}">
+                                                    <i class="fa fa-thumbs-up"></i><span class="likeCount">@item.LikeCount</span>
+                                                </span>
+                                                <span class="menu-item-add pull-right @{if (isFavorited && favoriteItems.DrinkItemID == item.DrinkItemID) { <text>favorited</text> } } " href="#addToFavorites" title="Favorite" data-type="DrinkItem" data-container="Restaurant-@Model.Restaurant.RestaurantID" data-action="/MyFavorites/AddFavoriteDrink" data-json="{&quot;RestaurantID&quot;: @Model.Restaurant.RestaurantID,&quot;DrinkItemID&quot;: @item.DrinkItemID,&quot;DrinkItemName&quot;: &quot;@item.DrinkItemName&quot;,&quot;price&quot;: @item.price}">
+                                                    <i class="fa fa-star fa-lg"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </text>
+                        }
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="employee">
+                <div class="row">
+                    <div class="menu-header col-md-4">
+                        <a href="#" role="button" data-toggle="modal" data-target="#employeeModal" class="btn btn-default"><i class="fa fa-plus-square fa-lg"></i>&nbsp; Add Employee</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="EmployeeContainer" class="list-group menu-container">
+
+                        @foreach (var item in Model.Restaurant.Employees)
+                        {
+                            var contribution = Model.FavUser.EmployeeContributions.FirstOrDefault(a => a.EmployeeID == item.EmployeeID);
+                            RestaurantFavoritizer.Models.LikeStatus like = RestaurantFavoritizer.Models.LikeStatus.None;
+                            if (contribution != null) { like = contribution.LikeStatus; }
+                            <text>
+                                <div class="menu-item col-md-4">
+                                    <div class="menu-item-information">
+                                        <a class="list-group-item" data-toggle="collapse" href="#collapse-employee-@item.EmployeeID" aria-expanded="false" aria-controls="collapse-emplyee-@item.EmployeeID">
+                                            <div class="menu-item-info">
+                                                <div class="menu-item-title"><h4>@item.EmployeeName</h4></div>
+                                                <div class="menu-item-type">@item.EmployeeType</div>
+                                                @if (@item.EmployeeDescription != null)
+                                                {
+                                                    <div class="menu-item-description">
+                                                        <p>
+                                                            @item.EmployeeDescription
+                                                        </p>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="menu-item-rating">
+                                                <span class="menu-item-dislikes pull-right @(like == RestaurantFavoritizer.Models.LikeStatus.Dislike ? "disliked" : "")" title="I Dislike This" data-action="/Restaurant/ToggleEmployeeLike" data-json="{&quot;EmployeeID&quot;: @item.EmployeeID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Dislike),&quot;RestaurantID&quot;: @item.RestaurantID}">
+                                                    <i class="fa fa-thumbs-down"></i><span class="dislikeCount">@item.DisLikeCount</span>
+                                                </span>
+                                                <span class="menu-item-likes pull-right @(like == RestaurantFavoritizer.Models.LikeStatus.Like ? "liked" : "")" title="I Like This" data-action="/Restaurant/ToggleEmployeeLike" data-json="{&quot;EmployeeID&quot;: @item.EmployeeID,&quot;LikeStatus&quot;: @((int)RestaurantFavoritizer.Models.LikeStatus.Like),&quot;RestaurantID&quot;: @item.RestaurantID}">
+                                                    <i class="fa fa-thumbs-up"></i><span class="likeCount">@item.LikeCount</span>
+                                                </span>
+                                                <span class="menu-item-add pull-right @{if (isFavorited && favoriteItems.EmployeeID == item.EmployeeID) { <text>favorited</text> } } " href="#" title="Favorite" data-type="EmployeeItem" data-container="Restaurant-@Model.Restaurant.RestaurantID" data-action="/MyFavorites/AddFavoriteEmployee" data-json="{&quot;RestaurantID&quot;: @Model.Restaurant.RestaurantID,&quot;EmployeeID&quot;: @item.EmployeeID,&quot;EmployeeName&quot;: &quot;@item.EmployeeName&quot;}">
+                                                    <i class="fa fa-star fa-lg"></i>
+                                                </span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </text>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@RenderPage("DrinkModal.cshtml")
+@RenderPage("FoodModal.cshtml")
+@RenderPage("EmployeeModal.cshtml")
